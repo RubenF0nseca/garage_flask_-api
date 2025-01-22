@@ -17,9 +17,10 @@ api = Api(
 from .client import clients_ns
 from .employee import employees_ns
 from .setting import settings_ns
+from .invoice import invoices_ns
 
 # Add namespaces to the Swagger documentation and API
 api.add_namespace(clients_ns, path='/client')  # Routes for client operations
 api.add_namespace(employees_ns, path='/employee')  # Routes for employee operations
 api.add_namespace(settings_ns, path='/setting')  # Routes for setting operations
-
+api.add_namespace(invoices_ns, path='/invoice')  # Routes for invoice operations
