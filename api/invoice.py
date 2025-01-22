@@ -54,17 +54,23 @@ class InvoiceList(Resource):
     @invoices_ns.marshal_with(invoice_model, code=201)
     def post(self):
         """
-        Create a new invoice.
+        Create a new invoice
         :return: The newly created invoice.
         """
         data = invoices_ns.payload
         try:
             client_id = data.get("client_id")
-            issued_at = data.get("issued_at")
             iva = data.get("iva")
             total = data.get("total")
             total_with_iva = data.get("total_with_iva")
-            return create_invoice(client_id, issued_at, iva, total, total_with_iva), 201
+
+            created_invoice = create_invoice(
+                client_id=client_id,
+                iva=iva,
+                total=total,
+                total_with_iva=total_with_iva
+            )
+            return created_invoice, 201
         except HTTPException as http_err:
             logger.error(f"HTTP error while creating an invoice: {http_err}")
             raise http_err
@@ -128,7 +134,9 @@ class Invoice(Resource):
             invoices_ns.abort(500, "An error occurred while updating the invoice.")
 
     @invoices_ns.doc("delete_invoice")
-    @invoices_ns.response(204, "Invoice successfully deleted")
+    @invoices_ns.response(200, "Invoice successfully deleted")
+    @invoices_ns.response(404, "Invoice not found")
+    @invoices_ns.response(500, "Internal Server Error")
     def delete(self, invoice_id):
         """
         Delete an invoice by ID.
@@ -138,9 +146,6 @@ class Invoice(Resource):
         try:
             result, status_code = delete_invoice(invoice_id)
             return result, status_code
-        except HTTPException as http_err:
-            logger.error(f"HTTP error while deleting invoice {invoice_id}: {http_err}")
-            raise http_err
         except Exception as e:
-            logger.error(f"Error deleting invoice {invoice_id}: {e}")
-            invoices_ns.abort(500, "An error occurred while deleting the invoice.")
+            logger.error(f"Unexpected error deleting invoice {invoice_id}: {e}")
+            invoices_ns.abort(500, "An unexpected error occurred.")

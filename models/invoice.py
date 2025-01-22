@@ -20,7 +20,7 @@ class Invoice(db.Model):
 
     invoice_id = db.Column(db.Integer, primary_key=True)  # Unique identifier for each invoice
     client_id = db.Column(db.Integer, ForeignKey('client.client_id'), nullable=False)  # Foreign key to 'client'
-    issued_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of invoice issuance
+    issued_at = db.Column(db.DateTime, server_default=db.func.now())  # Timestamp of invoice issuance
     iva = db.Column(db.Float, nullable=False)  # IVA percentage or value
     total = db.Column(db.Float, nullable=False)  # Total amount before IVA
     total_with_iva = db.Column(db.Float, nullable=False)  # Total amount after IVA

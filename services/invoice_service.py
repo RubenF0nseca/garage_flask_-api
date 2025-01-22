@@ -49,27 +49,25 @@ def get_invoice(invoice_id):
         logger.error(f"Error fetching invoice {invoice_id}: {e}")
         raise
 
-def create_invoice(client_id, issued_at, iva, total, total_with_iva):
+def create_invoice(client_id, iva, total, total_with_iva):
     """
     Create a new invoice.
     :param client_id: The ID of the client associated with the invoice.
-    :param issued_at: The date the invoice was issued.
-    :param iva: The IVA applied to the invoice.
-    :param total: The total amount before IVA.
-    :param total_with_iva: The total amount after adding IVA.
-    :return: dict: A dictionary containing the created invoice's information.
+    :param iva: The IVA (tax) applied to the invoice.
+    :param total: The total amount of the invoice before IVA.
+    :param total_with_iva: The total amount of the invoice after adding IVA.
+    :return: dict: A dictionary containing the newly created invoice's information.
     """
     try:
-        issued_at_obj = datetime.strptime(issued_at, "%Y-%m-%d %H:%M:%S")
         invoice = Invoice(
             client_id=client_id,
-            issued_at=issued_at_obj,
             iva=iva,
             total=total,
             total_with_iva=total_with_iva,
         )
         db.session.add(invoice)
         db.session.commit()
+
         return {
             "invoice_id": invoice.invoice_id,
             "client_id": invoice.client_id,
@@ -81,7 +79,7 @@ def create_invoice(client_id, issued_at, iva, total, total_with_iva):
     except Exception as e:
         logger.error(f"Error creating invoice: {e}")
         db.session.rollback()
-        return {"error": "Internal Server Error"}
+        return {"error": "Internal Server Error"}, 500
 
 def update_invoice(invoice_id, client_id, issued_at, iva, total, total_with_iva):
     """
@@ -133,7 +131,8 @@ def delete_invoice(invoice_id):
 
         db.session.delete(invoice)
         db.session.commit()
-        return {"message": f"Invoice {invoice_id} deleted successfully."}
+
+        return {"message": f"Invoice {invoice_id} deleted successfully."}, 200
     except Exception as e:
         logger.error(f"Error deleting invoice {invoice_id}: {e}")
         db.session.rollback()
