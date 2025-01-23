@@ -123,13 +123,12 @@ class Work(Resource):
         data = works_ns.payload
         try:
             cost = data.get("cost")
-            created_at = data.get("created_at")
             description = data.get("description")
             end_date = data.get("end_date")
             start_date = data.get("start_date")
             status = data.get("status")
             vehicle_id = data.get("vehicle_id")
-            work = update_work(work_id, cost, created_at, description, end_date, start_date, status, vehicle_id)
+            work = update_work(work_id, cost, description, end_date, start_date, status, vehicle_id)
             if not work:
                 works_ns.abort(404, f"Work {work_id} not found.")
             return work
