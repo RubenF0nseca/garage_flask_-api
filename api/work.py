@@ -59,16 +59,23 @@ class WorkList(Resource):
         """
         data = works_ns.payload
         try:
-            client_id = data.get("client_id")
-            iva = data.get("iva")
-            total = data.get("total")
-            total_with_iva = data.get("total_with_iva")
+            work_id = data.get("work_id")
+            cost = data.get("cost")
+            description = data.get("description")
+            end_date = data.get("end_date")
+            start_date = data.get("start_date")
+            status = data.get("status")
+            vehicle_id = data.get("vehicle_id")
+
 
             created_work = create_work(
-                client_id=client_id,
-                iva=iva,
-                total=total,
-                total_with_iva=total_with_iva
+                work_id=work_id,
+                cost=cost,
+                description=description,
+                end_date=end_date,
+                start_date=start_date,
+                status=status,
+                vehicle_id=vehicle_id
             )
             return created_work, 201
         except HTTPException as http_err:
@@ -117,12 +124,14 @@ class Work(Resource):
         """
         data = works_ns.payload
         try:
-            client_id = data.get("client_id")
-            issued_at = data.get("issued_at")
-            iva = data.get("iva")
-            total = data.get("total")
-            total_with_iva = data.get("total_with_iva")
-            work = update_work(work_id, client_id, issued_at, iva, total, total_with_iva)
+            work_id = data.get("work_id")
+            cost = data.get("cost")
+            description = data.get("description")
+            end_date = data.get("end_date")
+            start_date = data.get("start_date")
+            status = data.get("status")
+            vehicle_id = data.get("vehicle_id")
+            work = update_work(work_id, cost, description, end_date, start_date, status, vehicle_id)
             if not work:
                 works_ns.abort(404, f"Work {work_id} not found.")
             return work
