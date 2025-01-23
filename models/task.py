@@ -30,8 +30,10 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())  # Timestamp of task creation
 
     # Relationships with other models (example)
-    employee = relationship('Employee', back_populates='tasks')  # Relationship with 'Employee'
-    work = relationship('Work', back_populates='tasks')  # Relationship with 'Work'
+
+    relationship('Employee', back_populates='tasks')  # Relationship with 'Employee'
+
+    relationship('Work', back_populates='tasks')  # Relationship with 'Work'
 
     def __repr__(self):
         """

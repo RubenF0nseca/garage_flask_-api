@@ -65,6 +65,11 @@ def create_task(description, employee_id, start_date, end_date, status, work_id)
     :return: dict: A dictionary containing the newly created task's information.
     """
     try:
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        if isinstance(end_date, str):
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
         new_task = Task(
             description=description,
             employee_id=employee_id,
@@ -75,6 +80,7 @@ def create_task(description, employee_id, start_date, end_date, status, work_id)
         )
         db.session.add(new_task)
         db.session.commit()
+
         return {
             "task_id": new_task.task_id,
             "created_at": new_task.created_at,
@@ -103,6 +109,12 @@ def update_task(task_id, description, employee_id, start_date, end_date, status,
     :return: dict: A dictionary containing the updated task's information.
     """
     try:
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+
+        if isinstance(end_date, str):
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
         task = Task.query.get(task_id)
         if not task:
             return None
