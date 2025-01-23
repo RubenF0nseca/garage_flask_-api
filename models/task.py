@@ -21,13 +21,13 @@ class Task(db.Model):
     """
 
     task_id = db.Column(db.Integer, primary_key=True)  # Unique identifier for each task
-    created_at = db.Column(db.DateTime, server_default=db.func.now())  # Timestamp of task creation
     description = db.Column(db.Text, nullable=False)  # Task description
     employee_id = db.Column(db.Integer, ForeignKey('employee.employee_id'), nullable=False)  # Foreign key to 'employee'
     start_date = db.Column(db.Date, nullable=False)  # Task start date
     end_date = db.Column(db.Date)  # Task end date
     status = db.Column(db.Text)  # Task status
     work_id = db.Column(db.Integer, ForeignKey('work.work_id'), nullable=False)  # Foreign key to 'work'
+    created_at = db.Column(db.DateTime, server_default=db.func.now())  # Timestamp of task creation
 
     # Relationships with other models (example)
     employee = relationship('Employee', back_populates='tasks')  # Relationship with 'Employee'
