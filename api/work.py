@@ -59,7 +59,6 @@ class WorkList(Resource):
         """
         data = works_ns.payload
         try:
-            work_id = data.get("work_id")
             cost = data.get("cost")
             description = data.get("description")
             end_date = data.get("end_date")
@@ -69,7 +68,6 @@ class WorkList(Resource):
 
 
             created_work = create_work(
-                work_id=work_id,
                 cost=cost,
                 description=description,
                 end_date=end_date,
@@ -124,14 +122,14 @@ class Work(Resource):
         """
         data = works_ns.payload
         try:
-            work_id = data.get("work_id")
             cost = data.get("cost")
+            created_at = data.get("created_at")
             description = data.get("description")
             end_date = data.get("end_date")
             start_date = data.get("start_date")
             status = data.get("status")
             vehicle_id = data.get("vehicle_id")
-            work = update_work(work_id, cost, description, end_date, start_date, status, vehicle_id)
+            work = update_work(work_id, cost, created_at, description, end_date, start_date, status, vehicle_id)
             if not work:
                 works_ns.abort(404, f"Work {work_id} not found.")
             return work

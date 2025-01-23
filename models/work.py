@@ -12,12 +12,12 @@ class Work(db.Model):
     """
 
     work_id = db.Column(db.Integer, primary_key=True)  # Unique identifier for each work
-    cost = db.Column(db.Real, nullable=False)
+    cost = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())  # Timestamp of work issuance
     description = db.Column(db.String(200), nullable=False)
-    end_date = db.Column(db.Date)
+    end_date = db.Column(db.Date, nullable=False)
     start_date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String)
+    status = db.Column(db.String(50))
     vehicle_id = db.Column(db.Integer, ForeignKey('vehicle.vehicle_id'), nullable=False)  # Foreign key to 'vehicle'
     relationship('Vehicle', back_populates='works')  # Relationship with the 'Vehicle' model
 
