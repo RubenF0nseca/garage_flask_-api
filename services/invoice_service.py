@@ -81,7 +81,7 @@ def create_invoice(client_id, iva, total, total_with_iva):
         db.session.rollback()
         return {"error": "Internal Server Error"}, 500
 
-def update_invoice(invoice_id, client_id, issued_at, iva, total, total_with_iva):
+def update_invoice(invoice_id, client_id, iva, total, total_with_iva):
     """
     Update an existing invoice.
     :param invoice_id: The ID of the invoice to update.
@@ -93,13 +93,12 @@ def update_invoice(invoice_id, client_id, issued_at, iva, total, total_with_iva)
     :return: dict: A dictionary containing the updated invoice's information.
     """
     try:
-        issued_at_obj = datetime.strptime(issued_at, "%Y-%m-%d %H:%M:%S")
+
         invoice = Invoice.query.get(invoice_id)
         if not invoice:
             return {"error": f"Invoice with ID {invoice_id} not found."}, 404
 
         invoice.client_id = client_id
-        invoice.issued_at = issued_at_obj
         invoice.iva = iva
         invoice.total = total
         invoice.total_with_iva = total_with_iva

@@ -118,11 +118,10 @@ class Invoice(Resource):
         data = invoices_ns.payload
         try:
             client_id = data.get("client_id")
-            issued_at = data.get("issued_at")
             iva = data.get("iva")
             total = data.get("total")
             total_with_iva = data.get("total_with_iva")
-            invoice = update_invoice(invoice_id, client_id, issued_at, iva, total, total_with_iva)
+            invoice = update_invoice(invoice_id, client_id, iva, total, total_with_iva)
             if not invoice:
                 invoices_ns.abort(404, f"Invoice {invoice_id} not found.")
             return invoice
