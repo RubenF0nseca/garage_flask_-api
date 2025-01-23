@@ -43,16 +43,16 @@ class VehicleList(Resource):
         :return: List of all vehicles
         """
         try:
-            # Fetch all vehicles from the service layer
+            # Call the service to get all vehicles
             return get_all_vehicles()
         except HTTPException as http_err:
-            # Allow HTTP exceptions to propagate their status codes and messages
             logger.error(f"HTTP error while retrieving vehicles: {http_err}")
             raise http_err
         except Exception as e:
             # Log error and return a 500 status code
             logger.error(f"Error retrieving vehicles: {e}")
-            vehicles_ns.abort(500, "An error occurred while retrieving the vehicles.")
+            vehicles_ns.abort(500, "An error occurred while retrieving the list of vehicles.")
+
 
     @vehicles_ns.doc('create_vehicle')
     @vehicles_ns.expect(vehicle_model, validate=True)
@@ -60,12 +60,13 @@ class VehicleList(Resource):
     def post(self):
         """
         Create a new vehicle.
-        :return: The created vehicle with HTTP status code 201
+
         """
         data = vehicles_ns.payload  # Extract JSON payload
         try:
             # Call the service to create a new vehicle
-            return create_vehicle(data["brand"], data["client_id"], data["license_plate"], data["model"], data["year"]), 201
+            vehicle = create_vehicle(data["brand"], data["client_id"], data["license_plate"], data["model"], data["year"])
+            return vehicle, 201  # Return the newly created vehicle with status code 201
         except HTTPException as http_err:
             logger.error(f"HTTP error while creating vehicle: {http_err}")
             raise http_err
@@ -73,6 +74,8 @@ class VehicleList(Resource):
             # Log error and return a 500 status code
             logger.error(f"Error creating vehicle: {e}")
             vehicles_ns.abort(500, "An error occurred while creating the vehicle.")
+
+
 
 
 @vehicles_ns.route('/<int:vehicle_id>')
@@ -92,7 +95,7 @@ class Vehicle(Resource):
         :return: The vehicle details or 404 if not found
         """
         try:
-            # Fetch vehicle by ID
+            # Call the service to get the vehicle by ID
             vehicle = get_vehicle(vehicle_id)
             if not vehicle:
                 # Return a 404 error if vehicle does not exist
@@ -118,7 +121,7 @@ class Vehicle(Resource):
         data = vehicles_ns.payload  # Extract JSON payload
         try:
             # Call the service to update the vehicle
-            vehicle = update_vehicle(vehicle_id, data["brand"], data["client_id"], data["license_plate"], data["model"], data["year"])
+            vehicle = update_vehicle(vehicle_id, data["client_id"], data["brand"], data["license_plate"], data["model"], data["year"])
             if not vehicle:
                 # Return a 404 error if vehicle does not exist
                 vehicles_ns.abort(404, f"Vehicle with ID {vehicle_id} not found.")
@@ -141,11 +144,11 @@ class Vehicle(Resource):
         """
         try:
             # Call the service to delete the vehicle
-            vehicle = delete_vehicle(vehicle_id)
-            if not vehicle:
+            response = delete_vehicle(vehicle_id)
+            if not response:
                 # Return a 404 error if vehicle does not exist
                 vehicles_ns.abort(404, f"Vehicle with ID {vehicle_id} not found.")
-            return '', 204  # Return no content with status code 204
+            return response
         except HTTPException as http_err:
             logger.error(f"HTTP error while deleting vehicle with ID {vehicle_id}: {http_err}")
             raise http_err
